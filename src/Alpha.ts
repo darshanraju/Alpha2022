@@ -14,7 +14,7 @@ interface IAlpha {
   getContainerRegistry: () => Promise<Array<RegistryData>>;
   addInterfaceToContainer: (containerData: RegistryData) => void;
 }
-
+  
 const AlphaService: IAlpha = {
   getContainerRegistry: () => Promise.resolve(mockRegistryData),
 

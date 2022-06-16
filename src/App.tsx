@@ -16,7 +16,9 @@ const App: React.FC = () => {
         <ProfileContent />
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
-        <p>You are not signed in! Please sign in.</p>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <p>You are not signed in! Please sign in.</p>
+        </div>
       </UnauthenticatedTemplate>
     </PageLayout>
   );
@@ -28,7 +30,7 @@ function ProfileContent() {
 
   const name = accounts[0] && accounts[0].name;
 
-  function RequestAccessToken() {
+  const RequestAccessToken = () => {
     const request = {
       ...loginRequest,
       account: accounts[0],
@@ -45,7 +47,7 @@ function ProfileContent() {
           setAccessToken(response.accessToken);
         });
       });
-  }
+  };
 
   //Request an Access token on loac
   useEffect(() => {
@@ -59,8 +61,7 @@ function ProfileContent() {
         justifyContent: "center",
         flexDirection: "column",
         alignItems: "center",
-        paddingLeft: "5vw",
-        paddingRight: "5vw",
+        padding: "5vw",
       }}
       className="ProfileContent"
     >
