@@ -1,46 +1,63 @@
 export enum RegistryDataTypes {
-  Container = "Container",
+  Image = "Image",
   Interface = "Interface",
   Location = "Location",
+  Subscribe = "Subscribe"
 }
 
 export interface RegistryData {
-  Container: string;
+  Image: string;
   Interface: string;
   Location: string;
+  Subscribe?: string;
+  Dependents?: number;
 }
 
 interface IAlpha {
   getContainerRegistry: () => Promise<Array<RegistryData>>;
-  addInterfaceToContainer: (containerData: RegistryData) => void;
+  addInterfaceToContainer: (containerData: RegistryData) => Promise<void>;
+  subscribeToImageChange: (email: string, containerImage: string) => Promise<void>
 }
   
 const AlphaService: IAlpha = {
   getContainerRegistry: () => Promise.resolve(mockRegistryData),
 
   addInterfaceToContainer: (containerData: RegistryData) => {
-    throw new Error("Function not implemented.");
+    return new Promise(res => {
+      setTimeout(() => {
+        res()
+      }, 2000)
+    })
   },
+
+  subscribeToImageChange: function (email: string, containerImage: string): Promise<void> {
+    return new Promise(res => {
+      setTimeout(() => {
+        res()
+      }, 2000)
+    })
+  }
 };
 
 export const mockRegistryData = [
-  createData("India", "IN", "www.google.com"),
-  createData("China", "CN", "www.google.com"),
-  createData("Italy", "IT", "www.google.com"),
-  createData("United States", "US", "www.google.com"),
-  createData("Canada", "CA", "www.google.com"),
-  createData("Australia", "AU", "www.google.com"),
-  createData("Germany", "DE", "www.google.com"),
-  createData("Ireland", "IE", "www.google.com"),
-  createData("Mexico", "MX", "www.google.com"),
+  createData("India", "IN", "www.google.com", "endpoint1"),
+  createData("China", "CN", "www.google.com",  "endpoint1"),
+  createData("Italy", "IT", "www.google.com",  "endpoint1"),
+  createData("United States", "US", "www.google.com",  "endpoint1"),
+  createData("Canada", "CA", "www.google.com",  "endpoint1"),
+  createData("Australia", "AU", "www.google.com",  "endpoint1"),
+  createData("Germany", "DE", "www.google.com",  "endpoint1"),
+  createData("Ireland", "IE", "www.google.com",  "endpoint1"),
+  createData("Mexico", "MX", "www.google.com",  "endpoint1"),
 ];
 
 function createData(
-  Container: string,
+  Image: string,
   Interface: string,
-  Location: string
+  Location: string,
+  Subscribe: string
 ): RegistryData {
-  return { Container, Interface, Location };
+  return { Image, Interface, Location, Subscribe };
 }
 
 export default AlphaService;

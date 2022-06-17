@@ -9,6 +9,8 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import AlphaService, { RegistryData, RegistryDataTypes } from "../Alpha";
 import { useEffect, useState } from "react";
+import EmailIcon from "@mui/icons-material/Email";
+import styled from "styled-components";
 
 interface Column {
   id: RegistryDataTypes;
@@ -20,8 +22,8 @@ interface Column {
 
 const columns: readonly Column[] = [
   {
-    id: RegistryDataTypes.Container,
-    label: RegistryDataTypes.Container,
+    id: RegistryDataTypes.Image,
+    label: RegistryDataTypes.Image,
     minWidth: 170,
   },
   {
@@ -34,9 +36,26 @@ const columns: readonly Column[] = [
     label: RegistryDataTypes.Location,
     minWidth: 100,
   },
+  {
+    id: RegistryDataTypes.Subscribe,
+    label: RegistryDataTypes.Subscribe,
+    minWidth: 100,
+  },
 ];
 
-const ContainerTable = () => {
+const IconWrapper = styled.div`
+  &:hover {
+    cursor: pointer;
+    color: blue;
+  }
+`;
+
+interface IContainerTable {
+  email: string;
+  openToast: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const ContainerTable = ({ email, openToast }: IContainerTable) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = useState<Array<RegistryData>>([]);
@@ -51,6 +70,11 @@ const ContainerTable = () => {
     getRows();
   }, []);
 
+  const subscribeToImage = async (email: string, image: string) => {
+    await AlphaService.subscribeToImageChange(email, image);
+    openToast(true);
+  };
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -60,6 +84,16 @@ const ContainerTable = () => {
   ) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+  };
+
+  const renderSubscription = (column: any, value: any) => {
+    return (
+      <TableCell key={column.id} align={column.align}>
+        <IconWrapper onClick={() => subscribeToImage(email, value)}>
+          <EmailIcon fontSize="medium" />
+        </IconWrapper>
+      </TableCell>
+    );
   };
 
   return (
@@ -93,10 +127,13 @@ const ContainerTable = () => {
                       hover
                       role="checkbox"
                       tabIndex={-1}
-                      key={row.Container}
+                      key={row.Image}
                     >
                       {columns.map((column) => {
                         const value = row[column.id];
+                        if (column.id === RegistryDataTypes.Subscribe) {
+                          return renderSubscription(column, value);
+                        }
                         return (
                           <TableCell key={column.id} align={column.align}>
                             {column.format && typeof value === "number"

@@ -8,6 +8,7 @@ import {
 import { loginRequest } from "./authConfig";
 import Button from "react-bootstrap/Button";
 import ContainerTable from "./components/ContainerTable";
+import { Alert, Snackbar } from "@mui/material";
 
 const App: React.FC = () => {
   return (
@@ -27,7 +28,8 @@ const App: React.FC = () => {
 function ProfileContent() {
   const { instance, accounts, inProgress } = useMsal();
   const [accessToken, setAccessToken] = useState(null);
-
+  const [showToast, setShowToast] = useState(false);
+  const [email, setEmail] = useState<string>("");
   const name = accounts[0] && accounts[0].name;
 
   const RequestAccessToken = () => {
@@ -40,7 +42,10 @@ function ProfileContent() {
     instance
       .acquireTokenSilent(request)
       .then((response: any) => {
+        console.log("RESPONSE");
+        console.log(response);
         setAccessToken(response.accessToken);
+        setEmail(response.account.username);
       })
       .catch((e: any) => {
         instance.acquireTokenPopup(request).then((response: any) => {
@@ -73,8 +78,30 @@ function ProfileContent() {
           {/* <Button variant="secondary" onClick={RequestAccessToken}>
             Request Access Token
           </Button> */}
-          <ContainerTable />
+          {/* <ContainerTable email={email} openToast={setShowToast} /> */}
           {/* </div> */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+          >
+            {/* <Button variant="secondary" onClick={RequestAccessToken}>
+            Request Access Token
+          </Button> */}
+            <ContainerTable email={email} openToast={setShowToast} />
+            <Snackbar
+              open={showToast}
+              autoHideDuration={6000}
+              onClose={() => setShowToast(false)}
+              anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+            >
+              <Alert severity="success">
+                Successfully subscribed to image notifications!
+              </Alert>
+            </Snackbar>
+          </div>
         </>
       ) : (
         <div
@@ -87,7 +114,6 @@ function ProfileContent() {
           {/* <Button variant="secondary" onClick={RequestAccessToken}>
             Request Access Token
           </Button> */}
-          <ContainerTable />
         </div>
       )}
     </div>
